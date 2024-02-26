@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  node:
+    image: node:20
+    volumes:
+      - .:/home/app:delegated
+      - node_modules:/home/app/node_modules
+    working_dir: /home/app
+    tty: true
+
+  mysql:
+    build: ./.docker/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: influencer
+      MYSQL_USER: app
+      MYSQL_PASSWORD: PXuwBRJ5JMUx
+      MYSQL_ROOT_PASSWORD: GSs2DLHKaXEs
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  node_modules:
+  mysql-data:
