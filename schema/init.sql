@@ -1,5 +1,5 @@
 CREATE TABLE post (
-  id             BIGINT UNSIGNED PRIMARY KEY,
+  id             VARCHAR(20) PRIMARY KEY,
   influencer_id  INT UNSIGNED NOT NULL,
   shortcode      CHAR(11) NOT NULL,
   likes          INT UNSIGNED NOT NULL,

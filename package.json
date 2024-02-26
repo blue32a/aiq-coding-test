@@ -1,5 +1,9 @@
 {
   "name": "aiq-coding-test",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "mysql2": "^3.9.1"
+  },
   "devDependencies": {
     "jest": "^29.7.0"
   },
