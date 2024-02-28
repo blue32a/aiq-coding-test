@@ -237,6 +237,73 @@ describe('インフルエンサーについてのAPI', () => {
       expect(result).toHaveLength(10);
     });
   });
+  describe('インフルエンサーの投稿から名詞の使用回数の上位N件をJSON形式で返すAPI', () => {
+    async function fetchInfluencerTopUsedNouns(influencerId, limit) {
+      let url = 'http://localhost:3000/influencers/' + influencerId + '/top-used-nouns';
+      if (limit) {
+        url += '?limit=' + limit;
+      }
+      return fetch(url);
+    }
+    beforeEach(async () => {
+      await clearPost();
+    });
+    test('投稿に使われる名詞が多い順に返す', async () => {
+      // Arrange
+      await insertPost(createPost({
+        id: '200000000000000001',
+        influencer_id: 1,
+        text: '公園で猫が遊んでいる。',
+      }));
+      await insertPost(createPost({
+        id: '200000000000000002',
+        influencer_id: 1,
+        text: 'その猫はよく公園に来る。',
+      }));
+      await insertPost(createPost({
+        id: '200000000000000003',
+        influencer_id: 1,
+        text: '公園のベンチで本を読む。',
+      }));
+
+      // Act
+      const result = await fetchInfluencerTopUsedNouns(1)
+        .then(response => response.json());
+
+      // Assert
+      expect(result).toEqual([
+        {noun: '公園', count: 3},
+        {noun: '猫', count: 2},
+        {noun: 'ベンチ', count: 1},
+        {noun: '本', count: 1},
+      ]);
+    });
+    test('クエリパラメータ limit で指定した件数を最大とする', async () => {
+      // Arrange
+      await insertPost(createPost({
+        id: '200000000000000001',
+        influencer_id: 1,
+        text: '公園で猫が遊んでいる。',
+      }));
+      await insertPost(createPost({
+        id: '200000000000000002',
+        influencer_id: 1,
+        text: 'その猫はよく公園に来る。',
+      }));
+      await insertPost(createPost({
+        id: '200000000000000003',
+        influencer_id: 1,
+        text: '公園のベンチで本を読む。',
+      }));
+
+      // Act
+      const result = await fetchInfluencerTopUsedNouns(1, 2)
+        .then(response => response.json());
+
+      // Assert
+      expect(result).toHaveLength(2);
+    });
+  });
 });
 
 async function clearPost() {

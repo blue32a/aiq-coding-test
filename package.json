@@ -2,6 +2,7 @@
   "name": "aiq-coding-test",
   "dependencies": {
     "csv-parser": "^3.0.0",
+    "kuromojin": "^3.0.0",
     "mysql2": "^3.9.1"
   },
   "devDependencies": {

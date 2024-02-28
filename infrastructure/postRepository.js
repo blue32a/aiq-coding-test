@@ -8,6 +8,12 @@ class PostRepository {
       [post.id, post.influencer_id, post.shortcode, post.likes, post.comments, post.thumbnail, post.text, post.postedAt]
     );
   }
+  async findByInfluencer(id) {
+    return this.conn.execute(
+      'SELECT * FROM `post` WHERE influencer_id = ?',
+      [id]
+    ).then(([results]) => results);
+  }
   async findInfluencer(id) {
     return this.conn.execute(
       'SELECT influencer_id, AVG(likes) as likes_avg, AVG(comments) as comments_avg FROM `post` WHERE influencer_id = ? GROUP BY influencer_id',

@@ -1,11 +1,15 @@
 const { URL } = require('url');
 const { createConnection } = require('../../infrastructure/database');
 const PostRepository = require('../../infrastructure/postRepository');
+const { buildAnalyser } = require('../../infrastructure/morphologicalAnalyser');
 
 class InfluencerController {
-  async index(request, response, args) {
+  async _createRepository() {
     const conn = await createConnection();
-    const repository = new PostRepository(conn);
+    return new PostRepository(conn);
+  }
+  async index(request, response, args) {
+    const repository = await this._createRepository();
     const results = await repository.findInfluencer(args.id);
     if (results) {
       const data = {
@@ -24,8 +28,7 @@ class InfluencerController {
     const url = new URL(request.url, `http://${request.headers.host}/`);
     const limit = url.searchParams.get('limit') ?? 10;
 
-    const conn = await createConnection();
-    const repository = new PostRepository(conn);
+    const repository = await this._createRepository();
     const results = await repository.findInfluencersByAverageLikes(limit);
     const data = results.map((row) => {
       return {
@@ -41,8 +44,7 @@ class InfluencerController {
     const url = new URL(request.url, `http://${request.headers.host}/`);
     const limit = url.searchParams.get('limit') ?? 10;
 
-    const conn = await createConnection();
-    const repository = new PostRepository(conn);
+    const repository = await this._createRepository();
     const results = await repository.findInfluencersByAverageComments(limit);
     const data = results.map((row) => {
       return {
@@ -53,6 +55,36 @@ class InfluencerController {
 
     response.writeHead(200, {'Content-Type': 'application/json'});
     response.end(JSON.stringify(data));
+  }
+  async topUsedNouns(request, response, args) {
+    const repository = await this._createRepository();
+    const posts = await repository.findByInfluencer(args.id);
+
+    const text = posts.reduce((acc, post) => acc + post.text, '');
+    const nounCounts = await this._countNouns(text);
+
+    const url = new URL(request.url, `http://${request.headers.host}/`);
+    const limit = url.searchParams.get('limit') ?? 10;
+    const data = Array.from(nounCounts.entries())
+      .map(([noun, count]) => ({noun, count}))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+
+    response.writeHead(200, {'Content-Type': 'application/json'});
+    response.end(JSON.stringify(data));
+  }
+  async _countNouns(text) {
+    const analyser = await buildAnalyser();
+    const results = analyser.analyse(text);
+
+    const nounCounts = new Map();
+    for (const result of results) {
+      if (result.pos === '名詞') {
+        const count = nounCounts.get(result.surface_form) ?? 0;
+        nounCounts.set(result.surface_form, count + 1);
+      }
+    }
+    return nounCounts;
   }
 }
 
