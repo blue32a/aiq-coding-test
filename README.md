@@ -40,6 +40,8 @@ docker compose exec node bash
 
 次のコマンドでテストを実行することができます。
 
+※ テスト実行前にサーバーを起動してください。
+
 ```
 npm run test
 ```
@@ -60,3 +62,35 @@ node cli/loadPosts.js /path/to/xxx.csv
 
 ※ データの初期化は実装されていません。新しくデータをインポートする場合は、手動でデータを削除してください。
 ※ CSVデータのフォーマット検証は実施していません。
+
+## サーバー起動
+
+nodeコンテナに接続します。
+
+```
+docker compose exec node bash
+```
+
+次のコマンドを実行することでサーバーが起動します。
+
+```
+npm run start
+```
+
+## APIの一覧
+
+### インフルエンサーのサマリーを返すAPI
+
+`GET http://localhost:3000/influencers/<influencer_id>`
+
+### 平均いいね数が多いインフルエンサー上位N件を返すAPI
+
+`GET http://localhost:3000/influencers/by-average-likes?limit=<N>`
+
+### 平均コメント数が多いインフルエンサー上位N件を返すAPI
+
+`GET http://localhost:3000/influencers/by-average-comments?limit=<N>`
+
+### インフルエンサーの投稿から名詞の使用回数の上位N件を返すAPI
+
+`GET http://localhost:3000/influencers/<influencer_id>/top-used-nouns?limit=<N>`
