@@ -1,11 +1,13 @@
 const { createConnection } = require('../infrastructure/database');
+const PostRepository = require('../infrastructure/postRepository');
 const LoadPostsCommand = require('../app/console/loadPostsCommand');
 
 const args = process.argv.slice(2);
 
 async function main() {
   const conn = await createConnection();
-  const command = new LoadPostsCommand(conn);
+  const repository = new PostRepository(conn);
+  const command = new LoadPostsCommand(repository);
   await command.run(args);
 }
 
