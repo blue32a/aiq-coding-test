@@ -12,6 +12,8 @@ services:
       DB_USER: app
       DB_PASSWORD: PXuwBRJ5JMUx
       DB_NAME: influencer
+    ports:
+      - "3000:3000"
 
   mysql:
     build: ./.docker/mysql

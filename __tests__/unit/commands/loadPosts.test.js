@@ -1,5 +1,5 @@
-const LoadPosts = require('../../src/commands/loadPosts');
-const { createConnection } = require('../../src/infrastructure/database');
+const LoadPosts = require('../../../src/commands/loadPosts');
+const { createConnection } = require('../../../src/infrastructure/database');
 
 let conn;
 
@@ -57,5 +57,5 @@ async function findAllPost() {
 }
 
 async function clearPost() {
-  conn.query('DELETE FROM `post`');
+  return conn.query('DELETE FROM `post`');
 }
