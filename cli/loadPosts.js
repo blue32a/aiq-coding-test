@@ -13,7 +13,6 @@ async function main() {
 
 main()
   .then(() => {
-    console.log('Complete load posts!!!');
     process.exit(0);
   })
   .catch((error) => {
