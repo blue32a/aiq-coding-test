@@ -14,6 +14,12 @@ class PostRepository {
       [limit.toString()]
     ).then(([results]) => results);
   }
+  async findInfluencersByAverageComments(limit) {
+    return this.conn.execute(
+      'SELECT influencer_id, AVG(comments) as comments_avg FROM `post` GROUP BY influencer_id ORDER BY comments_avg DESC LIMIT ?',
+      [limit.toString()]
+    ).then(([results]) => results);
+  }
 }
 
 module.exports = PostRepository;

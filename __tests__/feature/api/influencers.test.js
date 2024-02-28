@@ -24,7 +24,7 @@ describe('インフルエンサーについてのAPI', () => {
     beforeEach(async () => {
       await clearPost();
     });
-    test('平均いいね数が一番多いinfuluencerが結果の最初に来る', async () => {
+    test('平均いいね数が多い順に並んだinfuluencerのリストが取得できる', async () => {
       // Arrange
       await insertPost(createPost({
         id: '2000000000000000000',
@@ -90,6 +90,89 @@ describe('インフルエンサーについてのAPI', () => {
 
       // Act
       const result = await fetchInfluencersByAverageLikes()
+        .then(response => response.json());
+
+      // Assert
+      expect(result).toHaveLength(10);
+    });
+  });
+  describe('平均コメント数が多いinfluencer上位N件をJSON形式で返すAPI', () => {
+    async function fetchInfluencersByAverageComments(limit) {
+      let url = 'http://localhost:3000/influencers/by-average-comments';
+      if (limit) {
+        url += '?limit=' + limit;
+      }
+      return fetch(url);
+    }
+    beforeEach(async () => {
+      await clearPost();
+    });
+    test('平均コメント数が多い順に並んだinfuluencerのリストが取得できる', async () => {
+      // Arrange
+      await insertPost(createPost({
+        id: '2000000000000000000',
+        influencer_id: 1,
+        comments: 10,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000001',
+        influencer_id: 1,
+        comments: 2,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000002',
+        influencer_id: 2,
+        comments: 8,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000003',
+        influencer_id: 2,
+        comments: 8,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000004',
+        influencer_id: 3,
+        comments: 10,
+      }));
+
+      // Act
+      const data = await fetchInfluencersByAverageComments()
+        .then(response => response.json());
+
+      // Assert
+      expect(data).toEqual([
+        {id: 3, comments_avg: '10.0000'},
+        {id: 2, comments_avg: '8.0000'},
+        {id: 1, comments_avg: '6.0000'},
+      ]);
+    });
+    test('クエリパラメータ limit で指定した件数を最大とする', async () => {
+      // Arrange
+      for (let i = 1; i <= 3; i++) {
+        await insertPost(createPost({
+          id: '200000000000000000' + i,
+          influencer_id: i,
+        }));
+      }
+
+      // Act
+      const result = await fetchInfluencersByAverageComments(2)
+        .then(response => response.json());
+
+      // Assert
+      expect(result).toHaveLength(2);
+    });
+    test('クエリパラメータ limit が指定されない場合は 10件 を最大とする', async () => {
+      // Arrange
+      for (let i = 1; i <= 11; i++) {
+        await insertPost(createPost({
+          id: '200000000000000000' + i,
+          influencer_id: i,
+        }));
+      }
+
+      // Act
+      const result = await fetchInfluencersByAverageComments()
         .then(response => response.json());
 
       // Assert
