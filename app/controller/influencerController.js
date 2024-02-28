@@ -3,6 +3,23 @@ const { createConnection } = require('../../infrastructure/database');
 const PostRepository = require('../../infrastructure/postRepository');
 
 class InfluencerController {
+  async index(request, response, args) {
+    const conn = await createConnection();
+    const repository = new PostRepository(conn);
+    const results = await repository.findInfluencer(args.id);
+    if (results) {
+      const data = {
+        id: results.influencer_id,
+        likes_avg: results.likes_avg,
+        comments_avg: results.comments_avg,
+      }
+      response.writeHead(200, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify(data));
+    } else {
+      response.writeHead(404, {'Content-Type': 'application/json'});
+      response.end(JSON.stringify({error: 'Not Found'}));
+    }
+  }
   async listByAverageLikes(request, response) {
     const url = new URL(request.url, `http://${request.headers.host}/`);
     const limit = url.searchParams.get('limit') ?? 10;

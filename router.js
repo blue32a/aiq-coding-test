@@ -6,7 +6,10 @@ async function route(request, response) {
   const baseURL = `http://${request.headers.host}/`;
   const url = new URL(request.url, baseURL);
 
-  if (url.pathname === '/influencers/by-average-likes') {
+  const match = url.pathname.match(/^\/influencers\/(\d+)$/);
+  if (match) {
+    await new InfluencerController().index(request, response, {id: match[1]});
+  } else if (url.pathname === '/influencers/by-average-likes') {
     await new InfluencerController().listByAverageLikes(request, response);
   } else if (url.pathname === '/influencers/by-average-comments') {
     await new InfluencerController().listByAverageComments(request, response);

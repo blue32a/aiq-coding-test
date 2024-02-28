@@ -13,7 +13,65 @@ afterAll(async () => {
 
 
 describe('インフルエンサーについてのAPI', () => {
-  describe('平均いいね数が多いinfluencer上位N件をJSON形式で返すAPI', () => {
+  describe('指定したインフルエンサーのサマリーをJSON形式で返すAPI', () => {
+    async function fetchInfluencer(influencerId) {
+      let url = 'http://localhost:3000/influencers/' + influencerId;
+      return fetch(url);
+    }
+    beforeEach(async () => {
+      await clearPost();
+    });
+    test('指定したインフルエンサーの平均いいね数、平均コメント数を取得できる', async () => {
+      // Arrange
+      await insertPost(createPost({
+        id: '2000000000000000000',
+        influencer_id: 1,
+        likes: 1,
+        comments: 2,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000001',
+        influencer_id: 1,
+        likes: 2,
+        comments: 4,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000002',
+        influencer_id: 1,
+        likes: 3,
+        comments: 6,
+      }));
+      await insertPost(createPost({
+        id: '2000000000000000003',
+        influencer_id: 2,
+      }));
+
+      // Act
+      const data = await fetchInfluencer(1)
+        .then(response => response.json());
+
+      // Assert
+      expect(data).toEqual({
+        id: 1,
+        likes_avg: '2.0000',
+        comments_avg: '4.0000',
+      });
+    });
+    test('指定したインフルエンサーが存在しなければ404エラーになる', async () => {
+      // Arrange
+      await insertPost(createPost({
+        id: '2000000000000000000',
+        influencer_id: 1,
+      }));
+
+      // Act
+      const response = await fetchInfluencer(2);
+
+      // Assert
+      expect(response.status).toBe(404);
+    });
+  });
+  describe('平均いいね数が多いインフルエンサー上位N件をJSON形式で返すAPI', () => {
     async function fetchInfluencersByAverageLikes(limit) {
       let url = 'http://localhost:3000/influencers/by-average-likes';
       if (limit) {
@@ -24,7 +82,7 @@ describe('インフルエンサーについてのAPI', () => {
     beforeEach(async () => {
       await clearPost();
     });
-    test('平均いいね数が多い順に並んだinfuluencerのリストが取得できる', async () => {
+    test('平均いいね数が多い順に並んだインフルエンサーのリストが取得できる', async () => {
       // Arrange
       await insertPost(createPost({
         id: '2000000000000000000',
@@ -96,7 +154,7 @@ describe('インフルエンサーについてのAPI', () => {
       expect(result).toHaveLength(10);
     });
   });
-  describe('平均コメント数が多いinfluencer上位N件をJSON形式で返すAPI', () => {
+  describe('平均コメント数が多いインフルエンサー上位N件をJSON形式で返すAPI', () => {
     async function fetchInfluencersByAverageComments(limit) {
       let url = 'http://localhost:3000/influencers/by-average-comments';
       if (limit) {
