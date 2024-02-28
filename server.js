@@ -1,6 +1,6 @@
 const http = require('http');
 const { URL } = require('url');
-const { createConnection } = require('./src/infrastructure/database');
+const { createConnection } = require('./infrastructure/database');
 
 const port = 3000;
 

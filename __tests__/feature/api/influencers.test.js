@@ -1,4 +1,4 @@
-const { createConnection } = require('../../../src/infrastructure/database');
+const { createConnection } = require('../../../infrastructure/database');
 
 let conn;
 

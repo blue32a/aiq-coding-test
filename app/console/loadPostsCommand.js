@@ -1,7 +1,7 @@
 const csv = require('csv-parser');
 const fs = require('fs');
 
-class LoadPosts {
+class LoadPostsCommand {
   constructor(conn) {
     this.conn = conn;
   }
@@ -21,4 +21,4 @@ class LoadPosts {
   }
 }
 
-module.exports = LoadPosts;
+module.exports = LoadPostsCommand;

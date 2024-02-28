@@ -1,11 +1,11 @@
-const { createConnection } = require('../src/infrastructure/database');
-const LoadPosts = require('../src/commands/loadPosts');
+const { createConnection } = require('../infrastructure/database');
+const LoadPostsCommand = require('../app/console/loadPostsCommand');
 
 const args = process.argv.slice(2);
 
 async function main() {
   const conn = await createConnection();
-  const command = new LoadPosts(conn);
+  const command = new LoadPostsCommand(conn);
   await command.run(args);
 }
 

@@ -1,5 +1,5 @@
-const LoadPosts = require('../../../src/commands/loadPosts');
-const { createConnection } = require('../../../src/infrastructure/database');
+const LoadPostsCommand = require('../../../../app/console/loadPostsCommand');
+const { createConnection } = require('../../../../infrastructure/database');
 
 let conn;
 
@@ -10,7 +10,7 @@ afterAll(async () => {
   await conn.end();
 });
 
-describe('投稿データをデータベースに読み込む LoadPosts コマンド', () => {
+describe('投稿データをデータベースに読み込む LoadPostsCommand', () => {
   beforeEach(async () => {
     await clearPost();
   });
@@ -18,7 +18,7 @@ describe('投稿データをデータベースに読み込む LoadPosts コマ�
     // Arrange
     const filePath = __dirname + '/data.csv';
     const args = [filePath];
-    const command = new LoadPosts(conn);
+    const command = new LoadPostsCommand(conn);
 
     // Act
     await command.run(args);
