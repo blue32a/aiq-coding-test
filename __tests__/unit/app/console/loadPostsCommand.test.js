@@ -20,7 +20,7 @@ describe('投稿データをデータベースに読み込む LoadPostsCommand',
     const filePath = __dirname + '/data.csv';
     const args = [filePath];
     const repository = new PostRepository(conn);
-    const command = new LoadPostsCommand(conn, repository);
+    const command = new LoadPostsCommand(repository);
 
     // Act
     await command.run(args);

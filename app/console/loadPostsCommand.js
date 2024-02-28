@@ -3,8 +3,7 @@ const fs = require('fs');
 const { createPostFromCsvRow } = require('../../domain/model/post');
 
 class LoadPostsCommand {
-  constructor(conn, postRepository) {
-    this.conn = conn;
+  constructor(postRepository) {
     this.postRepository = postRepository;
   }
   async run(args) {
