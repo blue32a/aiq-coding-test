@@ -1,4 +1,6 @@
 const { createConnection } = require('../../../infrastructure/database');
+const { createPostFromCsvRow } = require('../../../domain/model/post');
+const PostRepository = require('../../../infrastructure/postRepository');
 
 let conn;
 
@@ -101,21 +103,18 @@ async function clearPost() {
 }
 
 async function insertPost(post) {
-  return conn.execute(
-    'INSERT INTO `post` (id, influencer_id, shortcode, likes, comments, thumbnail, text, posted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [post.id, post.influencer_id, post.shortcode, post.likes, post.comments, post.thumbnail, post.text, post.post_date]
-  );
+  return new PostRepository(conn).save(post);
 }
 
-function createPost(param) {
-  return {
-    id: param.id,
-    influencer_id: param.influencer_id,
-    shortcode: param.shortcode ?? 'AAAAAAAAAAA',
-    likes: param.likes ?? 0,
-    comments: param.comments ?? 0,
-    thumbnail: param.thumbnail ?? 'https://placehold.jp/3d4070/ffffff/150x150.png',
-    text: param.text ?? 'dummy text',
-    post_date: param.post_date ?? new Date(),
-  }
+function createPost(params) {
+  return createPostFromCsvRow({
+    post_id: params.id,
+    influencer_id: params.influencer_id,
+    shortcode: params.shortcode ?? 'AAAAAAAAAAA',
+    likes: params.likes ?? 0,
+    comments: params.comments ?? 0,
+    thumbnail: params.thumbnail ?? 'https://placehold.jp/3d4070/ffffff/150x150.png',
+    text: params.text ?? 'dummy text',
+    post_date: params.post_date ?? '2023-02-27 15:10:00',
+  });
 }

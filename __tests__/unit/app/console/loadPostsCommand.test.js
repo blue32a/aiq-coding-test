@@ -1,5 +1,6 @@
 const LoadPostsCommand = require('../../../../app/console/loadPostsCommand');
 const { createConnection } = require('../../../../infrastructure/database');
+const PostRepository = require('../../../../infrastructure/postRepository');
 
 let conn;
 
@@ -18,7 +19,8 @@ describe('投稿データをデータベースに読み込む LoadPostsCommand',
     // Arrange
     const filePath = __dirname + '/data.csv';
     const args = [filePath];
-    const command = new LoadPostsCommand(conn);
+    const repository = new PostRepository(conn);
+    const command = new LoadPostsCommand(conn, repository);
 
     // Act
     await command.run(args);
