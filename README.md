@@ -1,5 +1,7 @@
 # aiq-coding-test
 
+:information_source: このリポジトリはレギュレーションに沿って公開されています。
+
 ## セットアップ
 
 [Docker](https://www.docker.com/ja-jp/)をインストールして、起動します。
